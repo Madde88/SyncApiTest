@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyncApiTest", "SyncApiTest\SyncApiTest.csproj", "{EFDBAEF1-9BE3-43EB-A7F7-2947E4694B94}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EFDBAEF1-9BE3-43EB-A7F7-2947E4694B94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFDBAEF1-9BE3-43EB-A7F7-2947E4694B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFDBAEF1-9BE3-43EB-A7F7-2947E4694B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFDBAEF1-9BE3-43EB-A7F7-2947E4694B94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
