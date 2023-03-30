@@ -14,6 +14,6 @@ public abstract class BaseEntity
     private DateTime DateCreated { get; set; }
     public DateTime? LocalDateUpdate { get; set; }
     public DateTime? ServerDateUpdated { get; set; }
-    public bool Deleted { get; set; }
+    public bool? Deleted { get; set; }
     public DateTime? LastSyncedAt { get; set; }
 }

@@ -32,7 +32,7 @@ namespace SyncApiTest.Migrations
                     b.Property<string>("Color")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Deleted")
+                    b.Property<bool?>("Deleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("LastSyncedAt")
@@ -61,43 +61,43 @@ namespace SyncApiTest.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("90b7b98c-505b-48b4-abcc-506d47fbbe61"),
+                            Id = new Guid("ec4edfea-e812-48be-9463-23d25039068c"),
                             Age = 9,
                             Breed = 0,
                             Color = "Black",
                             Deleted = false,
                             Name = "Lucy",
-                            OwnerId = new Guid("288bf7c6-163a-4fd4-a8a3-1e8b7ebf089c")
+                            OwnerId = new Guid("03c40583-4162-4bac-bf88-94f466da94f4")
                         },
                         new
                         {
-                            Id = new Guid("517a542a-e59f-49f8-b75a-43ebed7e9e79"),
+                            Id = new Guid("c3ea1c74-b3a4-4ff1-bd49-7c778197b45f"),
                             Age = 3,
                             Breed = 1,
                             Color = "Golden",
                             Deleted = false,
                             Name = "Ruby",
-                            OwnerId = new Guid("288bf7c6-163a-4fd4-a8a3-1e8b7ebf089c")
+                            OwnerId = new Guid("03c40583-4162-4bac-bf88-94f466da94f4")
                         },
                         new
                         {
-                            Id = new Guid("416c7350-d994-47ae-aa9d-a9a6eb04bd8a"),
+                            Id = new Guid("309cd235-feb1-4059-a713-7d1d78de22b9"),
                             Age = 5,
                             Breed = 2,
                             Color = "Brown",
                             Deleted = false,
                             Name = "Max",
-                            OwnerId = new Guid("2ebbad77-97e1-4a8c-8684-e0fa3ae6d2df")
+                            OwnerId = new Guid("be015344-fdb6-42aa-b8f8-a0a2c9d178d7")
                         },
                         new
                         {
-                            Id = new Guid("761bc29f-eb54-4cb5-a437-470898c17738"),
+                            Id = new Guid("5eae9102-e649-4c41-b6f6-2010e5628cea"),
                             Age = 2,
                             Breed = 3,
                             Color = "White",
                             Deleted = false,
                             Name = "Buddy",
-                            OwnerId = new Guid("2ebbad77-97e1-4a8c-8684-e0fa3ae6d2df")
+                            OwnerId = new Guid("be015344-fdb6-42aa-b8f8-a0a2c9d178d7")
                         });
                 });
 
@@ -113,7 +113,7 @@ namespace SyncApiTest.Migrations
                     b.Property<int?>("Age")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("Deleted")
+                    b.Property<bool?>("Deleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("LastSyncedAt")
@@ -136,14 +136,14 @@ namespace SyncApiTest.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("288bf7c6-163a-4fd4-a8a3-1e8b7ebf089c"),
+                            Id = new Guid("03c40583-4162-4bac-bf88-94f466da94f4"),
                             Age = 35,
                             Deleted = false,
                             Name = "John Doe"
                         },
                         new
                         {
-                            Id = new Guid("2ebbad77-97e1-4a8c-8684-e0fa3ae6d2df"),
+                            Id = new Guid("be015344-fdb6-42aa-b8f8-a0a2c9d178d7"),
                             Age = 30,
                             Deleted = false,
                             Name = "Jane Doe"

@@ -14,6 +14,7 @@ global using TestGraphQL.GraphQlExtensions;
 global using TestGraphQL.Exceptions;
 global using System.Collections;
 global using SyncApiTest.Services;
+global using System.ComponentModel.DataAnnotations.Schema;
 
 
 

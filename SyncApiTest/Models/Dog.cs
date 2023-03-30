@@ -9,7 +9,6 @@ public class Dog : BaseEntity
         public string? Color { get; set; }
         [Required]
         public Guid? OwnerId { get; set; }
-        [Required]
         public Owner? Owner { get; set; }
     }
 

@@ -57,9 +57,19 @@ public class Mutation
         return await _ownerRepository.AddDogToOwnerAsync(ownerId, dogId);
     }
     
+    [Error(typeof(SyncException))]
     public async Task<SyncPayload> SyncDateAsync(SyncInput input)
     {
-        return await _syncService.HandleSync(input);
+        try
+        {
+            return await _syncService.HandleSync(input);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw new SyncException();
+        }
+        
     }
 
 }

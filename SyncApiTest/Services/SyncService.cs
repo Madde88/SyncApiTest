@@ -4,12 +4,12 @@ public class SyncService : ISyncService
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public SyncService(ApplicationDbContext dbContext)
+    public SyncService(IDbContextFactory<ApplicationDbContext> dbContextFactory)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContextFactory.CreateDbContext();
     }
 
-    private async Task<List<T>> SyncData<T>(List<T> clientData) where T : BaseEntity
+    private async Task<List<T>> SyncData<T>(IEnumerable<T> clientData) where T : BaseEntity
     {
         try
         {
@@ -67,6 +67,9 @@ public class SyncService : ISyncService
 
     public async Task<SyncPayload> HandleSync(SyncInput input)
     {
+        try
+        {
+            
         var result = new Dictionary<string, object>();
         var inputContent = input.GetType().GetProperties();
         foreach (var entity in inputContent)
@@ -74,9 +77,21 @@ public class SyncService : ISyncService
             var entityType = entity.PropertyType.GetGenericArguments().FirstOrDefault();
             if (entityType != null)
             {
-                var entities = (IEnumerable)entity.GetValue(input);
-                var syncedEntities = await SyncData(entities.Cast<BaseEntity>().ToList());
-                result.Add(entityType.Name, syncedEntities);
+                try
+                {
+                    var entities = entity.GetValue(input) as IEnumerable;
+                    var syncDataMethod = typeof(SyncService)
+                        .GetMethod("SyncData", BindingFlags.Instance | BindingFlags.NonPublic);
+                    var methodInfo = syncDataMethod?.MakeGenericMethod(entityType);
+                
+                    var syncedEntities = await (Task<List<BaseEntity>>)methodInfo.Invoke(this, new object[] { entities });
+                    result.Add(entityType.Name, syncedEntities);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
             }
         }
         
@@ -98,6 +113,12 @@ public class SyncService : ISyncService
 
         // Return the SyncPayload object
         return syncPayload;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
 }

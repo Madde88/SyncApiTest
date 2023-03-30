@@ -12,6 +12,8 @@ builder.Services.AddGraphQLServer()
 
 builder.Services.AddTransient<IDogRepository,DogRepository>();
 builder.Services.AddTransient<IOwnerRepository,OwnerRepository>();
+builder.Services.AddTransient<ISyncService,SyncService>();
+
  
 var app = builder.Build();
 
