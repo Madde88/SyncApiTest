@@ -6,12 +6,14 @@ public class Mutation
     private readonly IDogRepository _dogRepository;
     private readonly IOwnerRepository _ownerRepository;
     private readonly ISyncService _syncService;
+    private readonly ISortingEntities _sortingEntities;
 
-    public Mutation(IDogRepository dogRepository, IOwnerRepository ownerRepository, ISyncService syncService)
+    public Mutation(IDogRepository dogRepository, IOwnerRepository ownerRepository, ISyncService syncService, ISortingEntities sortingEntities)
     {
         _dogRepository = dogRepository;
         _ownerRepository = ownerRepository;
         _syncService = syncService;
+        _sortingEntities = sortingEntities;
     }
 
     [Error(typeof(EntityDontExistsException))]
@@ -58,16 +60,17 @@ public class Mutation
     }
     
     [Error(typeof(SyncException))]
-    public async Task<SyncPayload> SyncDateAsync(SyncInput input)
+    public async Task SyncDateAsync(SyncInput input)
     {
         try
         {
-            return await _syncService.HandleSync(input);
+            var sortedInput = 
+            await _syncService.HandleSync(input);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            throw new SyncException();
+            throw new SyncException(e.ToString());
         }
         
     }

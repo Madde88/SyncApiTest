@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TestGraphQL.Data;
 
@@ -10,9 +11,11 @@ using TestGraphQL.Data;
 namespace SyncApiTest.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230401130316_Migration_3")]
+    partial class Migration_3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
@@ -30,9 +33,6 @@ namespace SyncApiTest.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Color")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DateCreated")
                         .HasColumnType("TEXT");
 
                     b.Property<bool?>("Deleted")
@@ -64,51 +64,43 @@ namespace SyncApiTest.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("9ff025ea-7b19-4d9c-bba0-e0db16bc8447"),
+                            Id = new Guid("6d8a44eb-0a51-46d9-ac72-80ffdd39cc5a"),
                             Age = 9,
                             Breed = 0,
                             Color = "Black",
-                            DateCreated = new DateTime(2023, 4, 1, 14, 18, 48, 884, DateTimeKind.Utc).AddTicks(7040),
                             Deleted = false,
                             Name = "Lucy",
-                            OwnerId = new Guid("2bb1150e-d6f1-4edc-ad2f-6d3a78e2c540"),
-                            ServerDateUpdated = new DateTime(2023, 4, 1, 14, 18, 48, 884, DateTimeKind.Utc).AddTicks(7040)
+                            OwnerId = new Guid("27b051cc-9147-475e-ae7b-386d2386e5d7")
                         },
                         new
                         {
-                            Id = new Guid("da8874d1-67c0-403c-93e3-2e857bd9731f"),
+                            Id = new Guid("b7fda981-c976-4d02-8fd2-dcf74966f269"),
                             Age = 3,
                             Breed = 1,
                             Color = "Golden",
-                            DateCreated = new DateTime(2023, 4, 1, 14, 18, 48, 884, DateTimeKind.Utc).AddTicks(7050),
                             Deleted = false,
                             Name = "Ruby",
-                            OwnerId = new Guid("2bb1150e-d6f1-4edc-ad2f-6d3a78e2c540"),
-                            ServerDateUpdated = new DateTime(2023, 4, 1, 14, 18, 48, 884, DateTimeKind.Utc).AddTicks(7050)
+                            OwnerId = new Guid("27b051cc-9147-475e-ae7b-386d2386e5d7")
                         },
                         new
                         {
-                            Id = new Guid("c00966d5-2657-45d5-9d27-634c72240870"),
+                            Id = new Guid("f9b51f07-182b-4760-8bd4-55661ad19fd3"),
                             Age = 5,
                             Breed = 2,
                             Color = "Brown",
-                            DateCreated = new DateTime(2023, 4, 1, 14, 18, 48, 884, DateTimeKind.Utc).AddTicks(7050),
                             Deleted = false,
                             Name = "Max",
-                            OwnerId = new Guid("6046725e-1f15-4ed6-a014-7ad695a4cd02"),
-                            ServerDateUpdated = new DateTime(2023, 4, 1, 14, 18, 48, 884, DateTimeKind.Utc).AddTicks(7050)
+                            OwnerId = new Guid("18126184-f3a0-4a5d-826c-75318f3a0053")
                         },
                         new
                         {
-                            Id = new Guid("b224766e-5cdf-433a-a008-78361ad76c43"),
+                            Id = new Guid("49a83292-4f5d-41a3-b3c6-2dddf00b02f4"),
                             Age = 2,
                             Breed = 3,
                             Color = "White",
-                            DateCreated = new DateTime(2023, 4, 1, 14, 18, 48, 884, DateTimeKind.Utc).AddTicks(7060),
                             Deleted = false,
                             Name = "Buddy",
-                            OwnerId = new Guid("6046725e-1f15-4ed6-a014-7ad695a4cd02"),
-                            ServerDateUpdated = new DateTime(2023, 4, 1, 14, 18, 48, 884, DateTimeKind.Utc).AddTicks(7060)
+                            OwnerId = new Guid("18126184-f3a0-4a5d-826c-75318f3a0053")
                         });
                 });
 
@@ -123,9 +115,6 @@ namespace SyncApiTest.Migrations
 
                     b.Property<int?>("Age")
                         .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("TEXT");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("INTEGER");
@@ -150,21 +139,17 @@ namespace SyncApiTest.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("2bb1150e-d6f1-4edc-ad2f-6d3a78e2c540"),
+                            Id = new Guid("27b051cc-9147-475e-ae7b-386d2386e5d7"),
                             Age = 35,
-                            DateCreated = new DateTime(2023, 4, 1, 14, 18, 48, 884, DateTimeKind.Utc).AddTicks(7130),
                             Deleted = false,
-                            Name = "John Doe",
-                            ServerDateUpdated = new DateTime(2023, 4, 1, 14, 18, 48, 884, DateTimeKind.Utc).AddTicks(7130)
+                            Name = "John Doe"
                         },
                         new
                         {
-                            Id = new Guid("6046725e-1f15-4ed6-a014-7ad695a4cd02"),
+                            Id = new Guid("18126184-f3a0-4a5d-826c-75318f3a0053"),
                             Age = 30,
-                            DateCreated = new DateTime(2023, 4, 1, 14, 18, 48, 884, DateTimeKind.Utc).AddTicks(7130),
                             Deleted = false,
-                            Name = "Jane Doe",
-                            ServerDateUpdated = new DateTime(2023, 4, 1, 14, 18, 48, 884, DateTimeKind.Utc).AddTicks(7130)
+                            Name = "Jane Doe"
                         });
                 });
 
