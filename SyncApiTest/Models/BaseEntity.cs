@@ -8,7 +8,7 @@ public abstract class BaseEntity
         ServerDateUpdated = DateTime.UtcNow;
         Deleted = false;
     }
-    public abstract IEnumerable<BaseEntity> GetDependencies();
+    //public abstract IEnumerable<BaseEntity> GetDependencies();
         
     [Key]
     public Guid Id { get; set; }

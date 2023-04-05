@@ -4,7 +4,7 @@ public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {
-
+        
     }
     
     public void DisableForeignKeys()
@@ -38,6 +38,7 @@ public class ApplicationDbContext : DbContext
             {
                 baseEntity.DateCreated = DateTime.UtcNow;
                 baseEntity.ServerDateUpdated = DateTime.UtcNow;
+                baseEntity.LastSyncedAt = DateTime.UtcNow;
                 baseEntity.Deleted = false;
             }
         }
@@ -49,7 +50,7 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ConfigureRelationships();
-        
+
         // Generate three GUIDS and place them in an arrays
         var dogids = new Guid[] {Guid.NewGuid(), Guid.NewGuid(),Guid.NewGuid(), Guid.NewGuid()};
         var ownerids = new Guid[] {Guid.NewGuid(), Guid.NewGuid()};

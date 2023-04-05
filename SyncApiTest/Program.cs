@@ -2,7 +2,8 @@ var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
 builder.Services.AddPooledDbContextFactory<ApplicationDbContext>(options =>
-    options.UseSqlite(configuration.GetConnectionString("SqlLite")));
+    options.UseSqlite(configuration.GetConnectionString("SqlLite"))
+        .EnableSensitiveDataLogging());
 
 builder.Services.AddGraphQLServer()
     .AddMutationConventions(applyToAllMutations: true)
@@ -13,6 +14,8 @@ builder.Services.AddGraphQLServer()
 builder.Services.AddTransient<IDogRepository,DogRepository>();
 builder.Services.AddTransient<IOwnerRepository,OwnerRepository>();
 builder.Services.AddTransient<ISyncService,SyncService>();
+//builder.Services.AddTransient<ISortingEntities,SortingEntities>();
+builder.Services.AddTransient<IPropertyDependencySorter, PropertyDependencySorter>();
 
  
 var app = builder.Build();

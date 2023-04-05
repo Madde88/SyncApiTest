@@ -15,10 +15,10 @@ public class Dog : BaseEntity
         public Guid? OwnerId { get; set; }
         public Owner? Owner { get; set; }
         
-        public override List<BaseEntity> GetDependencies()
-        {
-            return new List<BaseEntity> { Owner };
-        }
+        // public override List<BaseEntity> GetDependencies()
+        // {
+        //     return new List<BaseEntity> { Owner };
+        // }
     }
 
     public enum Breed
@@ -42,8 +42,5 @@ public class Dog : BaseEntity
         public string? Address { get; set; }
         public int? Age { get; set; }
         public List<Dog>? Dogs { get; set; }
-        public override IEnumerable<BaseEntity> GetDependencies()
-        {
-            return new List<BaseEntity>();        
-        }
+        
     }

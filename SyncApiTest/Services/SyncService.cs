@@ -3,19 +3,22 @@ namespace SyncApiTest.Services;
 public class SyncService : ISyncService
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly IPropertyDependencySorter _sortingEntities;
+    private readonly MapperlyMapper _mapper;
 
-    public SyncService(IDbContextFactory<ApplicationDbContext> dbContextFactory)
+    public SyncService(IDbContextFactory<ApplicationDbContext> dbContextFactory, IPropertyDependencySorter sortingEntities)
     {
+        _sortingEntities = sortingEntities;
         _dbContext = dbContextFactory.CreateDbContext();
+        _mapper = new MapperlyMapper();
     }
 
     private async Task<List<TEntity>> SyncData<TEntity>(IEnumerable<TEntity> clientData) where TEntity : BaseEntity
     {
         try
         {
-
             // Get server data
-            var serverData = await _dbContext.Set<TEntity>().ToListAsync();
+            var serverData = await _dbContext.Set<TEntity>().AsNoTracking().ToListAsync();
 
             // Create dictionaries of client and server data for efficient lookups
             var clientDict = clientData.ToDictionary(e => e.Id);
@@ -27,13 +30,22 @@ public class SyncService : ISyncService
                 // Check if entity exists on server
                 if (serverDict.TryGetValue(clientEntity.Id, out var serverEntity))
                 {
+                    var _dateCreated = serverEntity.DateCreated;
+                    var _localDateUpdated = serverEntity.LocalDateUpdate;
+                    var _deleted = serverEntity.Deleted;
+                    
                     // Update server entity if client version is newer
                     if (clientEntity.LocalDateUpdate > serverEntity.ServerDateUpdated)
                     {
-                        _dbContext.Entry(clientEntity).State = EntityState.Modified;
-                        //Generic way to map data
+                        //TODO:Generic way to map data
+                        serverEntity = clientEntity;
                         serverEntity.ServerDateUpdated = DateTime.UtcNow;
                         serverEntity.LastSyncedAt = DateTime.UtcNow;
+                        serverEntity.DateCreated = _dateCreated;
+                        serverEntity.LocalDateUpdate = _localDateUpdated;
+                        serverEntity.Deleted = _deleted;
+                        _dbContext.Update(serverEntity);
+                        serverDict[serverEntity.Id] = serverEntity;
                     }
 
                     // Check if client entity is marked as deleted
@@ -42,13 +54,16 @@ public class SyncService : ISyncService
                         // Mark server entity as deleted
                         serverEntity.Deleted = true;
                         serverEntity.ServerDateUpdated = DateTime.UtcNow;
+                        serverEntity.LastSyncedAt = DateTime.UtcNow;
+                        _dbContext.Update(serverEntity);
+                        serverDict[serverEntity.Id] = serverEntity;
                     }
                 }
                 // Otherwise, add client entity to server database
                 else
                 {
                     _dbContext.Set<TEntity>().Add(clientEntity);
-                    _dbContext.Entry(clientEntity).State = EntityState.Added; 
+                    serverDict.Add(clientEntity.Id, clientEntity);
                 }
             }
 
@@ -56,7 +71,7 @@ public class SyncService : ISyncService
             await _dbContext.SaveChangesAsync();
 
             // Return updated server data to client
-            return serverData;
+            return serverDict.Values.ToList();
 
         }
         catch (Exception ex)
@@ -71,12 +86,14 @@ public class SyncService : ISyncService
     {
         try
         {
+            var properties = input.GetType().GetProperties();
+            var sortedInput = _sortingEntities.SortByDependency(properties);
             await _dbContext.Database.BeginTransactionAsync();
        
             var result = new Dictionary<string, object>();
-            var inputContent = input.GetType().GetProperties();
+            //var inputContent = input.GetType().GetProperties();
 
-            foreach (var entity in inputContent)
+            foreach (var entity in sortedInput)
             {
                 var entityType = entity.PropertyType.GetGenericArguments().FirstOrDefault();
                 if (entityType != null)
@@ -99,12 +116,17 @@ public class SyncService : ISyncService
             foreach (var kvp in result)
             {
                 var propName = kvp.Key;
-                var prop = syncPayload.GetType().GetProperty(propName);
+                var prop = syncPayload.GetType().GetProperty($"{propName}s");
                 var propValue = kvp.Value;
 
                 // Convert the List<object> to List<T> using reflection
                 var propListType = typeof(List<>).MakeGenericType(prop.PropertyType.GenericTypeArguments[0]);
-                var propList = Activator.CreateInstance(propListType, new object[] { propValue }) as IList;
+                
+                var propList = Activator.CreateInstance(propListType) as IList;
+                foreach (var item in (IEnumerable)propValue)
+                {
+                    propList?.Add(item);
+                }
                 prop.SetValue(syncPayload, propList);
             }
 

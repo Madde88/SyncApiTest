@@ -1,34 +1,14 @@
 namespace SyncApiTest.Services;
-
 public class SortingEntities : ISortingEntities
-{
-    public IEnumerable<BaseEntity> SortEntitiesTopologically<TEntity>(IEnumerable<TEntity> clientData) where TEntity : BaseEntity
     {
-        try
+        public IEnumerable<BaseEntity> SortEntitiesTopologically(SyncInput input)
         {
-            
-            // Create a graph of entities and their dependencies
             var graph = new Dictionary<BaseEntity, List<BaseEntity>>();
-            foreach (var clientEntity in clientData)
+
+            // Add entities to graph
+            foreach (var entity in GetAllEntities(input))
             {
-                if (!graph.ContainsKey(clientEntity))
-                {
-                    graph[clientEntity] = new List<BaseEntity>();
-                }
-
-                var dependencies = clientEntity.GetDependencies();
-                foreach (var dependency in dependencies)
-                {
-                    if (dependency != null) // add null check here
-                    {
-                        if (!graph.ContainsKey(dependency))
-                        {
-                            graph[dependency] = new List<BaseEntity>();
-                        }
-
-                        graph[dependency].Add(clientEntity);
-                    }
-                }
+                AddEntityToGraph(entity, graph);
             }
 
             // Sort the entities using topological sort
@@ -39,38 +19,70 @@ public class SortingEntities : ISortingEntities
                 TopologicalSort(entity, visited, sortedEntities, graph);
             }
             sortedEntities.Reverse();
+
             return sortedEntities;
-        
         }
-        catch (Exception e)
+
+        private IEnumerable<BaseEntity> GetAllEntities(SyncInput input)
         {
-            Console.WriteLine(e);
-            throw;
+            var inputType = input.GetType();
+            var entityProperties = inputType.GetProperties()
+                .Where(p => typeof(IEnumerable<BaseEntity>).IsAssignableFrom(p.PropertyType));
+
+            foreach (var property in entityProperties)
+            {
+                var entities = (IEnumerable<BaseEntity>)property.GetValue(input);
+                if (entities != null)
+                {
+                    foreach (var entity in entities)
+                    {
+                        yield return entity;
+                    }
+                }
+            }
+        }
+
+        private void AddEntityToGraph(BaseEntity entity, Dictionary<BaseEntity, List<BaseEntity>> graph)
+        {
+            if (!graph.ContainsKey(entity))
+            {
+                graph[entity] = new List<BaseEntity>();
+            }
+
+            var dependencies = entity.GetDependencies();
+            foreach (var dependency in dependencies)
+            {
+                if (dependency != null)
+                {
+                    if (!graph.ContainsKey(dependency))
+                    {
+                        graph[dependency] = new List<BaseEntity>();
+                    }
+
+                    graph[dependency].Add(entity);
+                }
+            }
+        }
+
+        private void TopologicalSort(BaseEntity entity, HashSet<BaseEntity> visited, List<BaseEntity> sortedEntities, Dictionary<BaseEntity, List<BaseEntity>> graph)
+        {
+            if (visited.Contains(entity))
+            {
+                return;
+            }
+
+            visited.Add(entity);
+
+            foreach (var dependency in graph[entity])
+            {
+                TopologicalSort(dependency, visited, sortedEntities, graph);
+            }
+
+            sortedEntities.Add(entity);
         }
     }
 
-    
-    private void TopologicalSort<TEntity>(TEntity entity, HashSet<TEntity> visited, List<TEntity> sortedEntities, Dictionary<TEntity, List<TEntity>> graph) where TEntity : BaseEntity
+    public interface ISortingEntities
     {
-        if (visited.Contains(entity))
-        {
-            return;
-        }
-
-        visited.Add(entity);
-
-        foreach (var dependency in graph[entity])
-        {
-            TopologicalSort(dependency, visited, sortedEntities, graph);
-        }
-
-        sortedEntities.Add(entity);
+        IEnumerable<BaseEntity> SortEntitiesTopologically(SyncInput input);
     }
-
-}
-
-public interface ISortingEntities
-{
-    IEnumerable<BaseEntity> SortEntitiesTopologically<TEntity>(IEnumerable<TEntity> clientData)
-        where TEntity : BaseEntity;
-}
